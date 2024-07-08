@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Go Dungeon Adventure</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <script src="https://unpkg.com/htmx.org/dist/htmx.min.js"></script>
+</head>
+<body>
+    <div class="game-container">
+        <header>
+            <h1>Welcome to Go Dungeon Adventure!</h1>
+        </header>
+        <main>
+            <div id="game-info" class="game-info">
+                <h2>{{.CurrentRoom.Name}}</h2>
+                <p>{{.CurrentRoom.Description}}</p>
+
+                {{if .CurrentRoom.Enemies}}
+                <div id="enemy-info">
+                    <h3>Enemies in the Room</h3>
+                    {{range .CurrentRoom.Enemies}}
+                    <p>{{.Name}} - Health: {{.Health}}, Attack: {{.Attack}}</p>
+                    {{end}}
+                </div>
+                {{end}}
+
+                {{if .CurrentRoom.Puzzles}}
+                <div id="puzzle-info">
+                    <h3>Puzzles in the Room</h3>
+                    {{range .CurrentRoom.Puzzles}}
+                    <p>{{.Description}}</p>
+                    {{end}}
+                    <form hx-post="/solve-puzzle" hx-target="#puzzle-info">
+                        <input type="text" name="solution" placeholder="Enter solution (e.g., use key)">
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+                {{end}}
+
+                <h3>Inventory</h3>
+                <ul>
+                    {{range .Player.Inventory}}
+                    <li>{{.}}</li>
+                    {{end}}
+                </ul>
+
+                <h3>Actions</h3>
+                <div class="action-buttons">
+                    <button class="move-button" hx-post="/move" hx-target="#game-info" hx-swap="outerHTML" name="direction" value="east">➡️</button>
+                    <button class="move-button" hx-post="/move" hx-target="#game-info" hx-swap="outerHTML" name="direction" value="west">⬅️</button>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
